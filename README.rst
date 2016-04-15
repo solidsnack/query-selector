@@ -1,6 +1,6 @@
-=================
+==================
 ``query-selector``
-=================
+==================
 
 .. image:: https://travis-ci.org/solidsnack/query-selector.svg?branch=master
     :target: https://travis-ci.org/solidsnack/query-selector
@@ -24,7 +24,7 @@ For example, a file like this:
     --@ t one
     SELECT * FROM now();
 
-becomes and object with a single attribute `t`:
+becomes an object with a single attribute ``t``:
 
 .. code::
 
