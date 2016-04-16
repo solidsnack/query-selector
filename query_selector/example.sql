@@ -34,9 +34,11 @@ CREATE TABLE IF NOT EXISTS "animal*farm" (
 );
 
 
---@ get_farm one?
+--@ get_farm one? ro
 SELECT * FROM farm WHERE name = %(farm)s;
 
+--@ farms ro
+SELECT * FROM farm;
 
 --@ new_farm one
 INSERT INTO farm (name, location) VALUES (%(farm)s, %(poly)s)
@@ -50,5 +52,5 @@ WITH _(animal) AS (INSERT INTO animal (responds_to, kind, pig)
 INSERT INTO "animal*farm" (animal, farm) SELECT * FROM _ CROSS JOIN __
   RETURNING animal, farm;
 
---@ server_time one
+--@ server_time one ro
 SELECT * FROM now();

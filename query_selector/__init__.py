@@ -53,16 +53,19 @@ class QuerySelector(object):
         parsed = obtain_sql(source)
         grouped = group_queries(parsed)
         translated = translate_query_signatures(grouped)
-        self._queries = [(name, Query(args, mode, text))
-                         for name, args, mode, text in translated]
+        self._queries = [(name, Query(args, mode, ro, text))
+                         for name, args, mode, ro, text in translated]
         for name, val in self._queries:
             setattr(self, name, val)
 
 
 modes = set(['none', 'one?', 'one', 'many'])
 
+signature = re.compile('^--@ ([a-zA-Z_][a-zA-Z0-9_]*)'
+                       '( +([a-z][a-z][a-z]+[?]?))?( +(ro))? *')
 
-class Query(namedtuple('Query', 'args mode text')):
+
+class Query(namedtuple('Query', 'args mode readonly text')):
     """Contains the query text, mode string and the names of any ``%()s``
        parameters.
     """
@@ -70,8 +73,8 @@ class Query(namedtuple('Query', 'args mode text')):
 
 
 def translate_query_signatures(grouped):
-    for query_name, mode, text in grouped:
-        yield query_name, percent_expansions(text), mode, text
+    for query_name, mode, ro, text in grouped:
+        yield query_name, percent_expansions(text), mode, ro, text
 
 
 def group_queries(statements):
@@ -79,24 +82,24 @@ def group_queries(statements):
     current = None
     mode = None
     group = ''
+    readonly = False
     for token in tokens:
         if isinstance(token, Comment) and token.value.startswith('--@ '):
             if current is not None:
-                yield current, mode, group.rstrip()
-            assert token.value.endswith('\n')
-            info = token.value.strip().split(' ')
-            assert len(info) <= 3
-            if len(info) == 3:
-                current, mode = info[1:]
-            else:
-                current, mode = info[1], 'many'
-            assert mode in modes
+                yield current, mode, readonly, group.rstrip()
+            match = signature.match(token.value)
+            if not match:
+                continue
             group = ''
+            current, _, modestring, _, ro = match.groups()
+            readonly = not not ro
+            mode = modestring or 'many'
+            assert mode in modes
             continue
         if current is None:
             continue
-        group += token.value
-    yield current, mode, group.rstrip()
+        group += str(token)
+    yield current, mode, readonly, group.rstrip()
 
 
 def obtain_sql(source):

@@ -22,12 +22,51 @@ For example, a file like this:
 .. code:: sql
 
     --@ t one
-    SELECT * FROM now();
+    SELECT now();
 
 becomes an object with a single attribute ``t``:
 
-.. code::
+.. code:: pycon
 
     >>> q.t
-    Query(args=[], mode=u'one', text=u'SELECT * FROM now();')
+    Query(args=[], mode=u'one', readonly=False, text=u'SELECT * FROM now();')
 
+
+-----
+Modes
+-----
+
+Modes can be one of ``none``, ``one``, ``one?`` and ``many``. When not
+specified, default is ``many``. A mode string can also be followed with the
+single word ``ro`` as a clue that the query is read-only.
+
+Realistically, ``SELECT now()`` is a read-only query. We can annotate it as
+such, the resulting query datastructure records this:
+
+.. code:: pycon
+
+    >>> QuerySelector("""
+    ...   --@ t one ro
+    ...   SELECT now();
+    ... """).t
+    Query(args=[], mode=u'one', readonly=True, text=u'SELECT * FROM now();')
+
+----------
+Parameters
+----------
+
+``query-selector`` recognizes the ``%(...)s`` style parameter references
+defined in Python DBI 2.0. Say that we'd like to pass a timezone
+when selecting the server time. We can do so by adding ``AT TIME ZONE %(tz)s``
+to our query. The presence of this parameter is stored in the ``args`` field
+of the parsed result. (The parameters in ``.args`` are listed in the order of
+their first appearance in the query.)
+
+.. code:: pycon
+
+    >>> QuerySelector("""
+    ...     --@ t one ro
+    ...     SELECT now() AT TIME ZONE %(tz)s AS t;
+    ... """).t
+    Query(args=[u'tz'], mode=u'one', readonly=True,
+          text=u'SELECT now() AT TIME ZONE %(tz)s AS t;')
