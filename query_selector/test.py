@@ -16,3 +16,9 @@ def test_modes():
     assert q.get_farm.readonly
     assert q.farms.mode == 'many'
     assert q.farms.readonly
+
+
+def test_order():
+    q = QuerySelector(('query_selector', 'example.sql'))
+    names = list(name for name, _ in q)
+    assert names[:3] == ['init', 'ready', 'make_tables']

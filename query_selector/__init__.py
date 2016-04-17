@@ -43,7 +43,12 @@ from sqlparse.sql import Comment
 
 
 class QuerySelector(object):
-    """A collection of queries drawn from a SQL file."""
+    """A collection of queries drawn from a SQL file.
+
+    The queries are available as attributes. This class also provides an
+    iterable instance, allowing the queries to be iterated over in the order
+    they appear in the file.
+    """
     def __init__(self, source):
         """
         :param source: A string, file-like object or ``(package, resource)``
@@ -57,6 +62,9 @@ class QuerySelector(object):
                          for name, args, mode, ro, text in translated]
         for name, val in self._queries:
             setattr(self, name, val)
+
+    def __iter__(self):
+        return iter(self._queries)
 
 
 modes = set(['none', 'one?', 'one', 'many'])

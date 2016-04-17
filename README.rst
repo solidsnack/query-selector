@@ -31,6 +31,14 @@ becomes an object with a single attribute ``t``:
     >>> q.t
     Query(args=[], mode=u'one', readonly=False, text=u'SELECT * FROM now();')
 
+A ``QuerySelector`` object is iterable, providing pairs of name and query in
+the order that the queries originally appeared in the file.
+
+.. code:: pycon
+
+    >>> for name, q in qs:
+    ...     print '%s: %s' % (name, q)
+    t: Query(args=[], mode=u'one', readonly=True, text='SELECT now();')
 
 -----
 Modes
