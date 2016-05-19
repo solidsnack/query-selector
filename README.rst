@@ -40,6 +40,25 @@ the order that the queries originally appeared in the file.
     ...     print '%s: %s' % (name, q)
     t: Query(args=[], mode=u'one', readonly=True, text='SELECT now();')
 
+--------------------
+The Query Convention
+--------------------
+
+If you have a script `task.py` and a SQL file `task.sql`, or a module in a
+package `package/module.py` and a SQL file `package/module.sql`, QuerySelector
+has a shortcut for you:
+
+.. code:: python
+    from query_selector.magic import queries
+
+
+    for q in queries:
+        print q
+
+The ``magic`` module overrides the normal module loading machinery to
+determine which script or module is importing it and locate an adjacent SQL
+file. This magic is in a separate module to make it stricly opt-in!
+
 -----
 Modes
 -----

@@ -4,13 +4,14 @@ from setuptools import setup
 
 
 conf = dict(name='query-selector',
-            version='0.99.2',
+            version='0.99.3',
             author='Jason Dusek',
             author_email='jason.dusek@gmail.com',
             url='https://github.com/solidsnack/query-selector',
             install_requires=['oset',
                               'six',
-                              'sqlparse'],
+                              'sqlparse',
+                              'stackclimber'],
             setup_requires=['pytest-runner', 'setuptools'],
             tests_require=['flake8', 'pytest', 'tox'],
             description='Organize app queries in an annotated SQL file.',
