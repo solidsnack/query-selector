@@ -4,7 +4,7 @@ from setuptools import setup
 
 
 conf = dict(name='query-selector',
-            version='0.99.3',
+            version='0.99.4',
             author='Jason Dusek',
             author_email='jason.dusek@gmail.com',
             url='https://github.com/solidsnack/query-selector',

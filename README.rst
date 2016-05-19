@@ -49,6 +49,7 @@ package `package/module.py` and a SQL file `package/module.sql`, QuerySelector
 has a shortcut for you:
 
 .. code:: python
+
     from query_selector.magic import queries
 
 
